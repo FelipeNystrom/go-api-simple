@@ -74,7 +74,10 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 			var post Post
 			_ = json.NewDecoder(r.Body).Decode(&post)
 			post.Id = Id
+
+			fmt.Println(post)
 			posts = append(posts, post)
+			json.NewEncoder(w).Encode(&post)
 			return
 		}
 	}
