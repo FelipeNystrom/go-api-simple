@@ -57,7 +57,6 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	posts = append(posts, post)
-	fmt.Println(posts)
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -90,8 +89,6 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 
 			posts = append(posts, post)
 			json.NewEncoder(w).Encode(&post)
-			fmt.Println(post, posts)
-			fmt.Println("item is = ", item, "post is = ", post)
 			return
 		}
 	}
