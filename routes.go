@@ -64,20 +64,34 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 
 func updatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	err := r.ParseForm()
+
 	params := mux.Vars(r)
 
 	Id, _ := strconv.Atoi(params["id"])
 
+	if err != nil {
+		// Handle error
+		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	decoder := schema.NewDecoder()
+
 	for index, item := range posts {
 		if item.Id == Id {
 			posts = append(posts[:index], posts[index+1:]...)
+
 			var post Post
-			_ = json.NewDecoder(r.Body).Decode(&post)
+			_ = decoder.Decode(&post, r.Form)
+
 			post.Id = Id
 
-			fmt.Println(post)
 			posts = append(posts, post)
 			json.NewEncoder(w).Encode(&post)
+			fmt.Println(post, posts)
+			fmt.Println("item is = ", item, "post is = ", post)
 			return
 		}
 	}
