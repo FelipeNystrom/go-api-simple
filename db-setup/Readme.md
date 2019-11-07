@@ -1,6 +1,9 @@
-####Docker commands:
+#### Docker commands:
+
+**!** Sql script is only for setup in development not actual usage.
 
 Build image:
+
 From folder db-setup run
 
 `docker build .`
