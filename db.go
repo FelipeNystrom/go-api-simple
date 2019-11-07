@@ -65,13 +65,19 @@ func SelectFromDB(statement string) []ExistingPost {
 func WriteToDB(statement string, args ...string) {
 
 	stmt, err := db.Prepare(statement)
-	if err != nil {
-		panic(err)
+	logFatal(err)
+
+	a := make([]interface{}, len(args))
+	for i, v := range args {
+		a[i] = v
 	}
+
 	defer stmt.Close()
 
-	result, err := stmt.Exec(args)
+	result, err := stmt.Exec(a...)
+	logFatal(err)
 
-	fmt.Println(result)
+	n, err := result.RowsAffected()
 
+	fmt.Println(n, "new post created")
 }

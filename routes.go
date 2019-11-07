@@ -51,8 +51,6 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 
 	WriteToDB("INSERT INTO posts (title, body, author) VALUES($1, $2,$3);", post.Title, post.Body, post.Author)
 
-	fmt.Println(r.Form)
-
 	w.WriteHeader(http.StatusOK)
 }
 
