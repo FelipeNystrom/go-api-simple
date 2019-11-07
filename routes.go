@@ -23,9 +23,9 @@ func PostRoutes(r *mux.Router) {
 func getPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	FetchFromDB("select * from posts;")
-
-	// json.NewEncoder(w).Encode(posts)
+	posts := FetchFromDB("select * from posts;")
+	fmt.Println(posts)
+	// w.Write(posts)
 }
 
 func createPost(w http.ResponseWriter, r *http.Request) {

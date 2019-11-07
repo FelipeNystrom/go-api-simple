@@ -53,8 +53,6 @@ func FetchFromDB(statement string) []ExistingPost {
 		results = append(results, ExistingPost{id, PostBody{title, body, author}})
 	}
 
-	fmt.Println(results)
-
 	return results
 
 }

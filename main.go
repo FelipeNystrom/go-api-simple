@@ -9,12 +9,6 @@ import (
 	"github.com/subosito/gotenv"
 )
 
-// func logFatal(err error) {
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
-
 func init() {
 	gotenv.Load()
 }
