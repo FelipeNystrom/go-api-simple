@@ -20,10 +20,11 @@ func logFatal(err error) {
 func Init() {
 
 	pgUrl, err := pq.ParseURL(os.Getenv("DB_URL"))
-	dbConn, err := sql.Open("postgres", pgUrl)
+
+	instance, err := sql.Open("postgres", pgUrl)
 	logFatal(err)
 
-	db = dbConn
+	db = instance
 
 	err = db.Ping()
 	logFatal(err)
@@ -31,7 +32,12 @@ func Init() {
 	fmt.Println("database connection established succeefully!")
 }
 
-func FetchFromDB(statement string) []ExistingPost {
+func CloseDBConn() {
+	fmt.Println("Database connection closed!")
+	db.Close()
+}
+
+func SelectFromDB(statement string) []ExistingPost {
 
 	rows, err := db.Query(statement)
 	if err != nil {
@@ -47,7 +53,6 @@ func FetchFromDB(statement string) []ExistingPost {
 		var author string
 
 		err := rows.Scan(&id, &title, &body, &author)
-
 		logFatal(err)
 
 		results = append(results, ExistingPost{id, PostBody{title, body, author}})
@@ -57,20 +62,16 @@ func FetchFromDB(statement string) []ExistingPost {
 
 }
 
-func Query(statement string, args []string) *sql.Rows {
+func WriteToDB(statement string, args ...string) {
 
-	rows, err := db.Query(statement, args)
+	stmt, err := db.Prepare(statement)
 	if err != nil {
 		panic(err)
 	}
+	defer stmt.Close()
 
-	fmt.Println(rows)
+	result, err := stmt.Exec(args)
 
-	return rows
+	fmt.Println(result)
 
-}
-
-func CloseDBConn() {
-	fmt.Println("Database connection closed!")
-	db.Close()
 }

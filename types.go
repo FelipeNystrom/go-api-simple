@@ -3,7 +3,7 @@ package main
 type PostBody struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
-	Text   string `json:"text"`
+	Body   string `json:"body"`
 }
 
 type ExistingPost struct {
