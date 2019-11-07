@@ -10,28 +10,22 @@ import (
 	"github.com/gorilla/schema"
 )
 
-type Post struct {
-	Id     int    `json:"id"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
-	Text   string `json:"text"`
-}
+var posts []ExistingPost
 
-var posts []Post
+func PostRoutes(r *mux.Router) {
 
-func PostRoutes(router *mux.Router) {
-
-	posts = append(posts, Post{Id: 0, Title: "Hello world", Author: "Jane Doe", Text: "This is the first post from go test api!"}, Post{Id: 1, Title: "Hello world", Author: "Jane Doe", Text: "This is the first post from go test api!"})
-
-	router.HandleFunc("/posts", getPosts).Methods("GET")
-	router.HandleFunc("/post", createPost).Methods("POST")
-	router.HandleFunc("/post/{id}", updatePost).Methods("PUT")
-	router.HandleFunc("/post/{id}", deletePost).Methods("DELETE")
+	r.HandleFunc("/posts", getPosts).Methods("GET")
+	r.HandleFunc("/post", createPost).Methods("POST")
+	r.HandleFunc("/post/{id}", updatePost).Methods("PUT")
+	r.HandleFunc("/post/{id}", deletePost).Methods("DELETE")
 }
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(posts)
+
+	FetchFromDB("select * from posts;")
+
+	// json.NewEncoder(w).Encode(posts)
 }
 
 func createPost(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +40,7 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 
 	decoder := schema.NewDecoder()
 
-	var post Post
+	var post ExistingPost
 
 	err = decoder.Decode(&post, r.Form)
 
@@ -82,7 +76,7 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 		if item.Id == Id {
 			posts = append(posts[:index], posts[index+1:]...)
 
-			var post Post
+			var post ExistingPost
 			_ = decoder.Decode(&post, r.Form)
 
 			post.Id = Id
