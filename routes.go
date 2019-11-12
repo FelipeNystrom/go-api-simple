@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
@@ -24,7 +23,7 @@ func PostRoutes(r *mux.Router) {
 
 	r.HandleFunc("/posts", getPosts).Methods("GET")
 	r.HandleFunc("/post", createPost).Methods("POST")
-	r.HandleFunc("/post", updatePost).Methods("PUT")
+	r.HandleFunc("/post/{id}", updatePost).Methods("PUT")
 	r.HandleFunc("/post/{id}", deletePost).Methods("DELETE")
 }
 
@@ -59,7 +58,8 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 func updatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var post ExistingPost
+	idMap := mux.Vars(r)
+	var post PostBody
 
 	err := r.ParseForm()
 
@@ -69,17 +69,13 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 
 	handleBadRequest(err, w)
 
-	id := strconv.Itoa(post.Id)
-
-	fmt.Println(id)
-
-	WriteToDB("UPDATE posts SET title = $2, body = $3, author = $4 WHERE id = $1;", id, post.Title, post.Body, post.Author)
+	WriteToDB("UPDATE posts SET title = $2, body = $3, author = $4 WHERE id = $1;", idMap["id"], post.Title, post.Body, post.Author)
 }
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)
-	WriteToDB("DELETE FROM posts WHERE id = $1 RETURNING *", id["id"])
+	idMap := mux.Vars(r)
+	WriteToDB("DELETE FROM posts WHERE id = $1 RETURNING *", idMap["id"])
 
 	w.WriteHeader(http.StatusOK)
 }
