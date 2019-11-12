@@ -63,7 +63,6 @@ func SelectFromDB(statement string) []ExistingPost {
 }
 
 func WriteToDB(statement string, args ...string) {
-
 	stmt, err := db.Prepare(statement)
 	logFatal(err)
 
@@ -79,5 +78,5 @@ func WriteToDB(statement string, args ...string) {
 
 	n, err := result.RowsAffected()
 
-	fmt.Println(n, "new post created")
+	fmt.Println(n, "row affected")
 }
