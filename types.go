@@ -5,3 +5,8 @@ type PostBody struct {
 	Author string `json:"author"`
 	Body   string `json:"body"`
 }
+
+type ExistingPost struct {
+	Id int `json:"id"`
+	PostBody
+}
