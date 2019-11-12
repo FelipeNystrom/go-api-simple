@@ -25,7 +25,7 @@ func PostRoutes(r *mux.Router) {
 	r.HandleFunc("/posts", getPosts).Methods("GET")
 	r.HandleFunc("/post", createPost).Methods("POST")
 	r.HandleFunc("/post", updatePost).Methods("PUT")
-	r.HandleFunc("/post", deletePost).Methods("DELETE")
+	r.HandleFunc("/post/{id}", deletePost).Methods("DELETE")
 }
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
@@ -78,25 +78,8 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// body, err := ioutil.ReadAll(r.Body)
-	// handleBadRequest(err, w)
+	id := mux.Vars(r)
+	WriteToDB("DELETE FROM posts WHERE id = $1 RETURNING *", id["id"])
 
-	tempId := struct {
-		Id string `json:"id"`
-	}{}
-
-	// var result map[string]interface{}
-
-	err := r.ParseForm()
-
-	handleBadRequest(err, w)
-
-	err = decoder.Decode(*tempId, r.Form)
-
-	handleBadRequest(err, w)
-
-	// id, err := strconv.Atoi(result)
-
-	fmt.Println(result["id"])
-
+	w.WriteHeader(http.StatusOK)
 }
